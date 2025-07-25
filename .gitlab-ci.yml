@@ -1,0 +1,45 @@
+stages:
+  - install
+  - test
+  - deploy_staging
+  - deploy_prod
+
+# Cache dependencies to speed up builds
+cache:
+  paths:
+    - node_modules/
+
+# Job to install dependencies
+install_dependencies:
+  stage: install
+  image: node:16  # Use Node.js 16 image for the job
+  script:
+    - npm install  # Install dependencies, including 'supertest' and others from package.json
+  only:
+    - main  # Run only on the main branch or adjust as necessary
+
+# Job to run tests
+run_tests:
+  stage: test
+  image: node:16  # Use Node.js 16 image for the job
+  script:
+    - npm test  # Run the test command
+  only:
+    - main  # Run only on the main branch
+
+# Job to deploy to staging (this is an example, you may replace it with actual deployment steps)
+deploy_staging:
+  stage: deploy_staging
+  script:
+    - echo "Deploying to staging server..."  # Deploy steps go here
+  only:
+    - main  # Deploy only on the 'main' branch
+
+# Job to deploy to production (triggered manually when a tag is created)
+deploy_prod:
+  stage: deploy_prod
+  script:
+    - echo "Deploying to production server..."  # Deploy steps go here
+  only:
+    - tags  # Deploy only when a tag is pushed
+  when: manual  # Manual trigger for production deployment
